@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="#000820"/>
+
+  <!-- Maze walls (decorative) -->
+  <rect x="40" y="40" width="432" height="12" rx="4" fill="#3399FF" opacity="0.6"/>
+  <rect x="40" y="460" width="432" height="12" rx="4" fill="#3399FF" opacity="0.6"/>
+  <rect x="40" y="40" width="12" height="432" rx="4" fill="#3399FF" opacity="0.6"/>
+  <rect x="460" y="40" width="12" height="432" rx="4" fill="#3399FF" opacity="0.6"/>
+
+  <!-- Inner maze walls -->
+  <rect x="80"  y="120" width="90" height="12" rx="4" fill="#3399FF" opacity="0.5"/>
+  <rect x="342" y="120" width="90" height="12" rx="4" fill="#3399FF" opacity="0.5"/>
+  <rect x="80"  y="380" width="90" height="12" rx="4" fill="#3399FF" opacity="0.5"/>
+  <rect x="342" y="380" width="90" height="12" rx="4" fill="#3399FF" opacity="0.5"/>
+
+  <!-- Dots -->
+  <circle cx="170" cy="256" r="8"  fill="#FFDEAD" opacity="0.9"/>
+  <!-- Power pellet -->
+  <circle cx="256" cy="360" r="15" fill="#FFD700">
+    <animate attributeName="r" values="14;17;14" dur="1s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;0.7;1" dur="1s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Ghost (Blinky) - top right area -->
+  <g transform="translate(340,160)">
+    <!-- body -->
+    <path d="M-38,0 A38,38 0 0,1 38,0 L38,45 A12,12 0 0,1 26,57 A12,12 0 0,1 14,45 A12,12 0 0,1 2,57 A12,12 0 0,1 -10,45 A12,12 0 0,1 -22,57 A12,12 0 0,1 -34,45 L-38,0 Z" fill="#FF2222"/>
+    <!-- eyes white -->
+    <ellipse cx="-14" cy="-6" rx="11" ry="14" fill="white"/>
+    <ellipse cx="14"  cy="-6" rx="11" ry="14" fill="white"/>
+    <!-- pupils -->
+    <circle cx="-10" cy="-4" r="7" fill="#0022BB"/>
+    <circle cx="18"  cy="-4" r="7" fill="#0022BB"/>
+    <!-- highlight -->
+    <circle cx="-7"  cy="-8" r="3" fill="white"/>
+    <circle cx="21"  cy="-8" r="3" fill="white"/>
+  </g>
+
+  <!-- Pac-Man - center, mouth open right -->
+  <g transform="translate(210,250)">
+    <!-- Glow -->
+    <circle cx="0" cy="0" r="85" fill="#FFE000" opacity="0.15"/>
+    <circle cx="0" cy="0" r="75" fill="#FFE000" opacity="0.2"/>
+    <!-- Body -->
+    <path d="M0,0 L75,28 A75,75 0 1,0 75,-28 Z" fill="#FFE000"/>
+    <!-- Eye -->
+    <circle cx="20" cy="-42" r="9" fill="#000820"/>
+    <!-- Shine -->
+    <circle cx="-25" cy="-50" r="12" fill="#FFF176" opacity="0.5"/>
+  </g>
+
+  <!-- Score text -->
+  <text x="256" y="490" font-family="monospace" font-size="22" font-weight="bold"
+        fill="#FFE000" text-anchor="middle" opacity="0.8" letter-spacing="3">PAC-MAN</text>
+</svg>
