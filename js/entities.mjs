@@ -1,9 +1,11 @@
 import {
   CELL, COLS, W, R, D, L, U, DIRS, dir0,
   WALL, MAZE_DEF,
-  SCATTER, FRIGHTENED, EATEN, HOUSE,
+  SCATTER, CHASE, FRIGHTENED, EATEN, HOUSE,
   SPEED_PAC, SPEED_GHOST, SPEED_FRIGHT, SPEED_EATEN,
   FRIGHT_DURATION, FRIGHT_FLASH,
+  DEATH_ANIM_PER_MS, MOUTH_ANIM_PER_MS, GHOST_FLASH_INTERVAL_MS,
+  movePixels,
   isAlignedAt, canWalkAt, canWalkGhostAt, pickMoveToward, getHouseExitAction,
 } from './core.mjs';
 
@@ -13,6 +15,7 @@ export class Entity {
     this.y = row * CELL + CELL / 2;
     this.dir = dir0();
     this.speed = 2;
+    this.speedMul = 1;
   }
   get tileCol() { return Math.round((this.x - CELL / 2) / CELL); }
   get tileRow() { return Math.round((this.y - CELL / 2) / CELL); }
@@ -46,11 +49,16 @@ export class Pacman extends Entity {
     this.dying = false;
     this.deathProg = 0;
   }
-  update() {
+  setSpeedMul(mul) {
+    this.speedMul = mul;
+    this.speed = SPEED_PAC * mul;
+  }
+  update(dt) {
     if (this.dying) {
-      this.deathProg = Math.min(1, this.deathProg + 0.025);
+      this.deathProg = Math.min(1, this.deathProg + DEATH_ANIM_PER_MS * dt);
       return;
     }
+    const step = movePixels(this.speed, dt);
     if (this.aligned) {
       this.x = this.alignedX;
       this.y = this.alignedY;
@@ -64,11 +72,11 @@ export class Pacman extends Entity {
     const cd = this.dir;
     if (cd.dx === 0 && cd.dy === 0) return;
     if (this.aligned && !this.canWalk(this.tileCol + cd.dx, this.tileRow + cd.dy)) return;
-    this.x += cd.dx * this.speed;
-    this.y += cd.dy * this.speed;
+    this.x += cd.dx * step;
+    this.y += cd.dy * step;
     if (this.x < 0) this.x += W;
     if (this.x >= W) this.x -= W;
-    this.mouth += this.mouthSpd * 0.12;
+    this.mouth += this.mouthSpd * MOUTH_ANIM_PER_MS * dt;
     if (this.mouth >= 1) { this.mouth = 1; this.mouthSpd = -1; }
     if (this.mouth <= 0) { this.mouth = 0; this.mouthSpd = 1; }
   }
@@ -120,6 +128,7 @@ export class Ghost extends Entity {
     this.scatterRow = sRow;
     this.exitDelay = exitDelay;
     this.mode = HOUSE;
+    this.modeBeforeFright = SCATTER;
     this.frightTimer = 0;
     this.speed = SPEED_GHOST;
     this.dir = { ...U };
@@ -129,25 +138,39 @@ export class Ghost extends Entity {
     this.x = this.startCol * CELL + CELL / 2;
     this.y = this.startRow * CELL + CELL / 2;
     this.mode = HOUSE;
+    this.modeBeforeFright = SCATTER;
     this.frightTimer = 0;
-    this.speed = SPEED_GHOST;
+    this.speed = SPEED_GHOST * this.speedMul;
     this.dir = { ...U };
     this.exitTimer = this.exitDelay;
   }
+  setSpeedMul(mul) {
+    this.speedMul = mul;
+    this.syncSpeed();
+  }
+  syncSpeed() {
+    if (this.mode === FRIGHTENED) this.speed = SPEED_FRIGHT * this.speedMul;
+    else if (this.mode === EATEN) this.speed = SPEED_EATEN * this.speedMul;
+    else this.speed = SPEED_GHOST * this.speedMul;
+  }
   frighten() {
     if (this.mode === EATEN) return;
+    if (this.mode === SCATTER || this.mode === CHASE) {
+      this.modeBeforeFright = this.mode;
+    }
     this.mode = FRIGHTENED;
     this.frightTimer = FRIGHT_DURATION;
-    this.speed = SPEED_FRIGHT;
+    this.syncSpeed();
     const od = DIRS.find((d) => d.dx === -this.dir.dx && d.dy === -this.dir.dy);
     if (od) this.dir = { ...od };
   }
   eatMe() {
     this.mode = EATEN;
-    this.speed = SPEED_EATEN;
+    this.syncSpeed();
     this.frightTimer = 0;
   }
   update(pac, ghosts, dt) {
+    const step = movePixels(this.speed, dt);
     if (this.mode === EATEN) {
       const homeX = 13 * CELL + CELL / 2;
       const homeY = 14 * CELL + CELL / 2;
@@ -156,7 +179,7 @@ export class Ghost extends Entity {
         this.y = homeY;
         this.mode = HOUSE;
         this.exitTimer = 1500;
-        this.speed = SPEED_GHOST;
+        this.syncSpeed();
         this.dir = { ...U };
         return;
       }
@@ -171,8 +194,8 @@ export class Ghost extends Entity {
         this.moveToward({ col: 13, row: 14 });
         return;
       }
-      this.x += this.dir.dx * this.speed;
-      this.y += this.dir.dy * this.speed;
+      this.x += this.dir.dx * step;
+      this.y += this.dir.dy * step;
       if (this.x < 0) this.x += W;
       if (this.x >= W) this.x -= W;
       return;
@@ -180,8 +203,8 @@ export class Ghost extends Entity {
     if (this.mode === FRIGHTENED) {
       this.frightTimer -= dt;
       if (this.frightTimer <= 0) {
-        this.mode = SCATTER;
-        this.speed = SPEED_GHOST;
+        this.mode = this.modeBeforeFright;
+        this.syncSpeed();
       }
     }
     if (this.mode === HOUSE) {
@@ -199,13 +222,14 @@ export class Ghost extends Entity {
       this.pickDir(pac, ghosts);
       return;
     }
-    this.x += this.dir.dx * this.speed;
-    this.y += this.dir.dy * this.speed;
+    this.x += this.dir.dx * step;
+    this.y += this.dir.dy * step;
     if (this.x < 0) this.x += W;
     if (this.x >= W) this.x -= W;
   }
   updateHouse(dt) {
     this.exitTimer = Math.max(0, this.exitTimer - dt);
+    const houseStep = movePixels(this.speed * 0.6, dt);
     if (this.exitTimer > 0) {
       if (this.aligned) {
         this.x = this.alignedX;
@@ -213,7 +237,7 @@ export class Ghost extends Entity {
         if (this.tileRow <= 13) this.dir = { ...D };
         if (this.tileRow >= 15) this.dir = { ...U };
       }
-      this.y += this.dir.dy * this.speed * 0.6;
+      this.y += this.dir.dy * houseStep;
       return;
     }
     this.x = this.alignedX;
@@ -223,7 +247,7 @@ export class Ghost extends Entity {
     const action = getHouseExitAction(col, row);
     if (action.type === 'exit') {
       this.mode = SCATTER;
-      this.speed = SPEED_GHOST;
+      this.syncSpeed();
       this.dir = { ...L };
       return;
     }
@@ -236,8 +260,9 @@ export class Ghost extends Entity {
     const nr = this.tileRow + this.dir.dy;
     const cell = MAZE_DEF[nr]?.[((nc % COLS) + COLS) % COLS];
     if (cell === WALL) return;
-    this.x += this.dir.dx * this.speed;
-    this.y += this.dir.dy * this.speed;
+    const exitStep = movePixels(this.speed, dt);
+    this.x += this.dir.dx * exitStep;
+    this.y += this.dir.dy * exitStep;
   }
   canWalkGhost(col, row) {
     return canWalkGhostAt(this.mode, col, row);
@@ -283,12 +308,13 @@ export class Ghost extends Entity {
   get flashing() {
     return this.mode === FRIGHTENED && this.frightTimer < FRIGHT_FLASH;
   }
-  draw(ctx, t) {
+  draw(ctx, t, { reduceMotion = false } = {}) {
     const r = CELL * 0.44;
     const { x, y } = this;
     let bodyColor = this.color;
+    const flashMs = reduceMotion ? Infinity : GHOST_FLASH_INTERVAL_MS;
     if (this.mode === FRIGHTENED) {
-      bodyColor = this.flashing && Math.floor(t / 220) % 2 ? '#ffffff' : '#0033ff';
+      bodyColor = this.flashing && Math.floor(t / flashMs) % 2 ? '#ffffff' : '#0033ff';
     } else if (this.mode === EATEN) {
       this._drawEyes(ctx, x, y, r);
       return;
@@ -311,7 +337,7 @@ export class Ghost extends Entity {
     if (this.mode !== FRIGHTENED) {
       this._drawEyes(ctx, x, y, r);
     } else {
-      this._drawScaredFace(ctx, x, y, r, bodyColor, t);
+      this._drawScaredFace(ctx, x, y, r, bodyColor, t, flashMs);
     }
   }
   _drawEyes(ctx, x, y, r) {
@@ -336,8 +362,8 @@ export class Ghost extends Entity {
     ctx.arc(rx2 + pd.dx * pR * 0.6, ey + pd.dy * pR * 0.6, pR, 0, Math.PI * 2);
     ctx.fill();
   }
-  _drawScaredFace(ctx, x, y, r, col, t) {
-    const flash = this.flashing && Math.floor(t / 220) % 2;
+  _drawScaredFace(ctx, x, y, r, col, t, flashMs) {
+    const flash = this.flashing && Math.floor(t / flashMs) % 2;
     const fc = flash ? col : 'white';
     ctx.fillStyle = fc;
     ctx.beginPath();

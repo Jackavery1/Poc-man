@@ -121,5 +121,10 @@ export function initInput({ game, getPacman, canvas, audio }) {
     else if (game.state === 'paused') game.state = 'playing';
   });
 
-  return { pollHeldKeys, focusGame };
+  function togglePause() {
+    if (game.state === 'playing') game.state = 'paused';
+    else if (game.state === 'paused') game.state = 'playing';
+  }
+
+  return { pollHeldKeys, focusGame, togglePause };
 }

@@ -1,11 +1,16 @@
 export const audio = {
   ctx: null,
   chomping: false,
+  muted: false,
   init() {
     if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
   },
+  toggleMute() {
+    this.muted = !this.muted;
+    return this.muted;
+  },
   tone(freq, dur, type = 'square', vol = 0.2, t = 0) {
-    if (!this.ctx) return;
+    if (!this.ctx || this.muted) return;
     const o = this.ctx.createOscillator();
     const g = this.ctx.createGain();
     o.connect(g);

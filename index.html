@@ -28,9 +28,15 @@
     <span style="font-size:13px;color:#FFE000;text-shadow:0 0 12px #FFE000,0 0 30px #FF8800;">★ PAC-MAN ★</span>
   </div>
   <div class="hud-block" style="align-items:flex-end;">
-    <span class="hud-label">BEST</span>
+    <span class="hud-label">RECORD</span>
     <span class="hud-val cyan" id="hud-hi">0</span>
+    <button type="button" id="btn-mute" class="hud-btn" aria-label="Couper le son">🔊</button>
   </div>
+</div>
+
+<div id="sw-update" hidden>
+  <span>Mise a jour disponible</span>
+  <button type="button" id="sw-reload">Recharger</button>
 </div>
 
 <div id="lives-row"></div>
@@ -44,7 +50,7 @@
 <div id="dpad">
   <button class="dbtn" id="dbtn-up" aria-label="Haut">▲</button>
   <button class="dbtn" id="dbtn-left" aria-label="Gauche">◀</button>
-  <div id="dbtn-center" aria-hidden="true"><span>LVL</span><span id="hud-level" style="color:rgba(255,255,255,0.5);">1</span></div>
+  <button type="button" class="dbtn" id="dbtn-pause" aria-label="Pause"><span>II</span><span class="dpad-lvl" id="hud-level-dpad">1</span></button>
   <button class="dbtn" id="dbtn-right" aria-label="Droite">▶</button>
   <button class="dbtn" id="dbtn-down" aria-label="Bas">▼</button>
 </div>

@@ -29,6 +29,101 @@ export const SPEED_EATEN = 4.0;
 export const FRIGHT_DURATION = 8000;
 export const FRIGHT_FLASH = 2500;
 
+export const FRAME_MS = 1000 / 60;
+export const COLLISION_HIT_RADIUS = CELL * 0.72;
+export const COLLISION_HIT_RADIUS_SQ = COLLISION_HIT_RADIUS ** 2;
+export const DEATH_ANIM_PER_MS = 0.025 / FRAME_MS;
+export const MOUTH_ANIM_PER_MS = 0.12 / FRAME_MS;
+export const GHOST_FLASH_INTERVAL_MS = 220;
+export const EXTRA_LIFE_SCORE = 10000;
+export const MAX_LEVEL_SPEED_MUL = 1.35;
+export const FRUIT_SPAWN_DOTS = 70;
+export const FRUIT_DURATION_MS = 9000;
+export const ELROY_DOTS_THRESHOLD = 20;
+export const ELROY_SPEED_MUL = 1.25;
+export const FRUIT_COL = 13;
+export const FRUIT_ROW = 17;
+
+/** @type {readonly number[]} */
+export const FRUIT_SCORES = [100, 300, 500, 700, 1000, 2000, 3000, 5000];
+
+/**
+ * @param {number} level
+ * @returns {number}
+ */
+export function speedMultiplierForLevel(level) {
+  return Math.min(1 + (level - 1) * 0.05, MAX_LEVEL_SPEED_MUL);
+}
+
+export function ghostEatPoints(streak) {
+  return 200 * 2 ** Math.max(0, streak - 1);
+}
+
+export function movePixels(speed, dt) {
+  return speed * (dt / FRAME_MS);
+}
+
+/**
+ * @param {number} level
+ * @returns {number}
+ */
+export function fruitPointsForLevel(level) {
+  return FRUIT_SCORES[Math.min(Math.max(1, level) - 1, FRUIT_SCORES.length - 1)];
+}
+
+/**
+ * @param {number} score
+ * @param {boolean} alreadyGiven
+ * @param {number} [threshold]
+ * @returns {boolean}
+ */
+export function shouldAwardExtraLife(score, alreadyGiven, threshold = EXTRA_LIFE_SCORE) {
+  return !alreadyGiven && score >= threshold;
+}
+
+/**
+ * @param {number} x1
+ * @param {number} y1
+ * @param {number} x2
+ * @param {number} y2
+ * @param {number} [radiusSq]
+ * @returns {boolean}
+ */
+export function entitiesCollide(x1, y1, x2, y2, radiusSq = COLLISION_HIT_RADIUS_SQ) {
+  const dx = x1 - x2;
+  const dy = y1 - y2;
+  return dx * dx + dy * dy < radiusSq;
+}
+
+/**
+ * @param {number} totalDots
+ * @param {number} dotsLeft
+ * @returns {number}
+ */
+export function dotsEaten(totalDots, dotsLeft) {
+  return totalDots - dotsLeft;
+}
+
+/**
+ * @param {number} totalDots
+ * @param {number} dotsLeft
+ * @param {boolean} fruitActive
+ * @param {boolean} fruitSpawned
+ * @returns {boolean}
+ */
+export function shouldSpawnFruit(totalDots, dotsLeft, fruitActive, fruitSpawned) {
+  if (fruitActive || fruitSpawned) return false;
+  return dotsEaten(totalDots, dotsLeft) >= FRUIT_SPAWN_DOTS;
+}
+
+/**
+ * @param {number} dotsLeft
+ * @returns {boolean}
+ */
+export function isElroyActive(dotsLeft) {
+  return dotsLeft <= ELROY_DOTS_THRESHOLD;
+}
+
 export const MAZE_DEF = [
   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1],

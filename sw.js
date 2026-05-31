@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pacman-v1.6';
+const CACHE_NAME = 'pacman-1.5.0';
 const CORE_FILES = [
   './',
   './index.html',
@@ -14,6 +14,7 @@ const CORE_FILES = [
   './js/render.mjs',
   './js/game.mjs',
   './js/input.mjs',
+  './js/hud.mjs',
   './js/main.mjs',
 ];
 

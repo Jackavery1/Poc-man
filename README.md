@@ -23,8 +23,10 @@ Pocman/
 │   ├── game.mjs       # Etat, collisions, score
 │   ├── render.mjs     # Canvas, overlays
 │   ├── input.mjs      # Clavier, D-pad, swipe
+│   ├── hud.mjs        # Score, record, annonces
 │   ├── audio.mjs      # Sons Web Audio
 │   └── main.mjs       # Orchestration, boucle rAF
+│   e2e/               # Tests Playwright
 ├── tests/
 ├── sw.js
 ├── manifest.json
@@ -35,9 +37,20 @@ Pocman/
 
 ```bash
 npm install
-npm run serve
-# http://localhost:8080
+npm run dev
 ```
+
+Ouvrir **http://localhost:8080** dans le navigateur (pas `file://` — les modules ES exigent HTTP).
+
+| Commande | Description |
+|----------|-------------|
+| `npm run dev` | Serveur local (recommande, via Node) |
+| `npm run serve` | Identique a `dev` |
+| `npm run serve:py` | Alternative Python si besoin |
+
+> Ne pas utiliser `npm run vite` — ce projet n utilise pas Vite.
+
+**Depannage :** si le port 8080 est deja pris, fermez l autre terminal (`Ctrl+C`) ou tuez le processus, puis relancez `npm run dev`.
 
 ## Qualite
 
@@ -45,6 +58,7 @@ npm run serve
 npm test
 npm run test:coverage
 npm run lint
+npm run test:e2e
 ```
 
 ## Deploiement

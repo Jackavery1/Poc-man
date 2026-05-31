@@ -6,14 +6,23 @@ import {
 
 export function createRenderer() {
   const canvas = document.getElementById('canvas');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = `${W}px`;
+  canvas.style.height = `${H}px`;
   const ctx = canvas.getContext('2d');
-  canvas.width = W;
-  canvas.height = H;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   const wallCanvas = document.createElement('canvas');
   wallCanvas.width = W;
   wallCanvas.height = H;
   const wctx = wallCanvas.getContext('2d');
+
+  const dotsCanvas = document.createElement('canvas');
+  dotsCanvas.width = W;
+  dotsCanvas.height = H;
+  const dctx = dotsCanvas.getContext('2d');
 
   function buildWallCache() {
     wctx.fillStyle = '#000820';
@@ -49,39 +58,75 @@ export function createRenderer() {
   buildWallCache();
 
   let getMaze = () => [];
+  let getFruit = () => null;
+  let mazeDirty = true;
   const popups = [];
+  let reduceMotion = false;
 
-  function drawFrame(ts) {
+  function rebuildDotsCache() {
     const maze = getMaze();
-    ctx.clearRect(0, 0, W, H);
-    ctx.drawImage(wallCanvas, 0, 0);
+    dctx.clearRect(0, 0, W, H);
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
-        const t = maze[r][c];
-        if (t !== DOT && t !== PELLET && t !== DOOR) continue;
+        const t = maze[r]?.[c];
+        if (t !== DOT && t !== DOOR) continue;
         const px = c * CELL + CELL / 2;
         const py = r * CELL + CELL / 2;
         if (t === DOT) {
-          ctx.fillStyle = '#DDCCAA';
-          ctx.beginPath();
-          ctx.arc(px, py, 2, 0, Math.PI * 2);
-          ctx.fill();
-        } else if (t === PELLET) {
-          const sz = 4.5 + Math.sin(ts * 0.006) * 1.5;
-          ctx.save();
-          ctx.shadowColor = '#FFD700';
-          ctx.shadowBlur = 12;
-          ctx.fillStyle = '#FFD700';
-          ctx.beginPath();
-          ctx.arc(px, py, sz, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
+          dctx.fillStyle = '#DDCCAA';
+          dctx.beginPath();
+          dctx.arc(px, py, 2, 0, Math.PI * 2);
+          dctx.fill();
         } else if (t === DOOR) {
-          ctx.fillStyle = '#FF88FF';
-          ctx.fillRect(c * CELL + 1, r * CELL + CELL / 2 - 1.5, CELL - 2, 3);
+          dctx.fillStyle = '#FF88FF';
+          dctx.fillRect(c * CELL + 1, r * CELL + CELL / 2 - 1.5, CELL - 2, 3);
         }
       }
     }
+    mazeDirty = false;
+  }
+
+  function drawFruit() {
+    const fruit = getFruit();
+    if (!fruit) return;
+    const { x, y, color } = fruit;
+    ctx.save();
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 14;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x - 4, y - 2, 5, 0, Math.PI * 2);
+    ctx.arc(x + 4, y - 2, 5, 0, Math.PI * 2);
+    ctx.arc(x, y + 4, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#2a8010';
+    ctx.fillRect(x - 1, y - 8, 3, 5);
+    ctx.restore();
+  }
+
+  function drawFrame(ts) {
+    const maze = getMaze();
+    if (mazeDirty) rebuildDotsCache();
+    ctx.clearRect(0, 0, W, H);
+    ctx.drawImage(wallCanvas, 0, 0);
+    ctx.drawImage(dotsCanvas, 0, 0);
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        if (maze[r][c] !== PELLET) continue;
+        const px = c * CELL + CELL / 2;
+        const py = r * CELL + CELL / 2;
+        const sz = reduceMotion ? 4.5 : 4.5 + Math.sin(ts * 0.006) * 1.5;
+        ctx.save();
+        ctx.shadowColor = '#FFD700';
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = '#FFD700';
+        ctx.beginPath();
+        ctx.arc(px, py, sz, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+    drawFruit();
   }
 
   function drawLives(pacman) {
@@ -112,11 +157,14 @@ export function createRenderer() {
   }
 
   function updatePopups(dt) {
-    for (let i = popups.length - 1; i >= 0; i--) {
-      popups[i].life -= dt / 800;
-      popups[i].y -= 0.5;
-      if (popups[i].life <= 0) popups.splice(i, 1);
+    let n = 0;
+    for (let i = 0; i < popups.length; i++) {
+      const p = popups[i];
+      p.life -= dt / 800;
+      p.y -= 0.5;
+      if (p.life > 0) popups[n++] = p;
     }
+    popups.length = n;
   }
 
   function drawPopups() {
@@ -148,8 +196,8 @@ export function createRenderer() {
       ctx.shadowBlur = 0;
       ctx.fillStyle = '#aaa';
       ctx.font = '8px monospace';
-      ctx.fillText('PRESS SPACE / TAP', tx, ty + 10);
-      ctx.fillText('TO START', tx, ty + 30);
+      ctx.fillText('ESPACE / TOUCHER', tx, ty + 10);
+      ctx.fillText('POUR JOUER', tx, ty + 30);
       ctx.fillStyle = '#0ff';
       ctx.fillText('FLECHES / WASD / ZQSD', tx, ty + 60);
       ctx.fillStyle = '#888';
@@ -157,11 +205,11 @@ export function createRenderer() {
       ctx.fillText('CLIQUEZ LE JEU PUIS JOUEZ', tx, ty + 78);
       ctx.fillStyle = 'rgba(255,100,100,0.8)';
       ctx.font = '6px monospace';
-      ctx.fillText('--- GHOST RULES ---', tx, ty + 90);
+      ctx.fillText('--- REGLES ---', tx, ty + 90);
       const g = [
         '* Fantomes = danger',
-        '* Pastilles = invincible!',
-        '* Fantomes bleus = +200pts',
+        '* Pastilles = invincible',
+        '* Fruit apres 70 pastilles',
       ];
       g.forEach((t, i) => {
         ctx.fillStyle = '#ccc';
@@ -174,11 +222,11 @@ export function createRenderer() {
       ctx.shadowColor = '#ffff00';
       ctx.shadowBlur = 16;
       ctx.fillStyle = '#ffff00';
-      ctx.fillText('READY!', W / 2, H / 2 + 30);
+      ctx.fillText('PRET !', W / 2, H / 2 + 30);
       ctx.shadowBlur = 0;
     }
     if (state === 'levelComplete') {
-      const flash = Math.floor(ts / 300) % 2;
+      const flash = reduceMotion ? 1 : Math.floor(ts / 300) % 2;
       ctx.fillStyle = 'rgba(0,8,32,0.5)';
       ctx.fillRect(0, 0, W, H);
       ctx.textAlign = 'center';
@@ -186,7 +234,10 @@ export function createRenderer() {
       ctx.shadowColor = '#00ff88';
       ctx.shadowBlur = 20;
       ctx.fillStyle = flash ? '#00ff88' : '#ffffff';
-      ctx.fillText('LEVEL CLEAR!', W / 2, H / 2);
+      ctx.fillText('NIVEAU TERMINE !', W / 2, H / 2 - 12);
+      ctx.font = '10px monospace';
+      ctx.fillStyle = '#aaffcc';
+      ctx.fillText(`INTERMISSION ${game.intermissionLevel}`, W / 2, H / 2 + 14);
       ctx.shadowBlur = 0;
     }
     if (state === 'gameOver') {
@@ -197,16 +248,16 @@ export function createRenderer() {
       ctx.shadowColor = '#ff2244';
       ctx.shadowBlur = 22;
       ctx.fillStyle = '#ff2244';
-      ctx.fillText('GAME OVER', W / 2, H / 2 - 50);
+      ctx.fillText('FIN DE PARTIE', W / 2, H / 2 - 50);
       ctx.shadowBlur = 0;
       ctx.fillStyle = '#fff';
       ctx.font = '9px monospace';
-      ctx.fillText(`SCORE: ${game.score}`, W / 2, H / 2 - 10);
+      ctx.fillText(`SCORE : ${game.score}`, W / 2, H / 2 - 10);
       ctx.fillStyle = '#0ff';
-      ctx.fillText(`BEST:  ${game.hiScore}`, W / 2, H / 2 + 12);
+      ctx.fillText(`RECORD : ${game.hiScore}`, W / 2, H / 2 + 12);
       ctx.fillStyle = '#aaa';
       ctx.font = '7px monospace';
-      ctx.fillText('SPACE / TAP TO RETRY', W / 2, H / 2 + 50);
+      ctx.fillText('ESPACE / TOUCHER POUR REJOUER', W / 2, H / 2 + 50);
     }
     if (state === 'paused') {
       ctx.fillStyle = 'rgba(0,8,32,0.7)';
@@ -216,11 +267,11 @@ export function createRenderer() {
       ctx.shadowColor = '#fff';
       ctx.shadowBlur = 10;
       ctx.fillStyle = '#fff';
-      ctx.fillText('PAUSED', W / 2, H / 2);
+      ctx.fillText('PAUSE', W / 2, H / 2);
       ctx.shadowBlur = 0;
       ctx.fillStyle = '#aaa';
       ctx.font = '7px monospace';
-      ctx.fillText('SPACE TO RESUME', W / 2, H / 2 + 25);
+      ctx.fillText('ESPACE POUR REPRENDRE', W / 2, H / 2 + 25);
     }
   }
 
@@ -229,6 +280,15 @@ export function createRenderer() {
     ctx,
     setMazeGetter(fn) {
       getMaze = fn;
+    },
+    setFruitGetter(fn) {
+      getFruit = fn;
+    },
+    setReduceMotion(value) {
+      reduceMotion = value;
+    },
+    invalidateMaze() {
+      mazeDirty = true;
     },
     drawFrame,
     drawLives,

@@ -5,7 +5,7 @@ export default defineConfig({
     include: ['tests/**/*.test.mjs'],
     coverage: {
       provider: 'v8',
-      include: ['js/core.mjs'],
+      include: ['js/core.mjs', 'js/entities.mjs'],
       thresholds: {
         lines: 40,
         functions: 40,

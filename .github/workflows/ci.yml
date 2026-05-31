@@ -18,6 +18,8 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run test:coverage
+      - run: npx playwright install chromium --with-deps
+      - run: npm run test:e2e
 
   deploy:
     needs: test

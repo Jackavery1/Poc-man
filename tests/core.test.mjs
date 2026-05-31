@@ -12,6 +12,8 @@ import {
   getHouseExitAction,
   tileColFromX,
   alignedXY,
+  wrapCol,
+  COLS,
 } from '../js/core.mjs';
 
 describe('isAlignedAt', () => {
@@ -76,5 +78,12 @@ describe('canWalkAt', () => {
 describe('tileColFromX', () => {
   it('calcule la colonne au centre', () => {
     expect(tileColFromX(13 * CELL + CELL / 2)).toBe(13);
+  });
+});
+
+describe('wrapCol', () => {
+  it('boucle les colonnes negatives et hors grille', () => {
+    expect(wrapCol(-1)).toBe(COLS - 1);
+    expect(wrapCol(COLS)).toBe(0);
   });
 });

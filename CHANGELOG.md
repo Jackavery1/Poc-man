@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.5.0] - 2026-05-31
+
+### Ajoute
+- Module `js/hud.mjs` (decouplage DOM)
+- Fruits bonus (70 pastilles), mode Elroy (Blinky)
+- Intermission entre niveaux
+- Canvas HiDPI (`devicePixelRatio`)
+- Tests `game.test.mjs`, logique fruit/elroy, Playwright e2e
+- Screenshots manifest PWA
+
+### Corrige (audit)
+- Couverture Vitest etendue a `entities.mjs`
+- Labels HUD : RECORD
+- Popups sans `splice` en boucle
+- SW `pacman-1.5.0` aligne manifest
+- `orientation: any` dans manifest
+
+## [1.4.0] - 2026-05-30
+
+### Corrige (audit)
+- Mouvement base sur `dt` (independant du FPS)
+- Mode fantome restaure apres FRIGHTENED (CHASE/SCATTER)
+- Vitesses augmentent avec le niveau (+5 % / niveau, max 135 %)
+- Cache canvas pour pastilles statiques
+- Canvas responsive (`max-width: 100 %`)
+- UI en francais (PRET, PAUSE, FIN DE PARTIE…)
+- `prefers-reduced-motion` : moins d animations
+- Vie bonus a 10 000 points
+- Bouton pause mobile (centre D-pad) et mute son
+- Banniere mise a jour PWA + SW v1.7
+
+### Ajoute
+- Tests `game-logic`, `entities`, `wrapCol`
+- Constantes `COLLISION_HIT_RADIUS`, `ghostEatPoints`, etc.
+
 ## [1.3.1] - 2026-05-30
 
 ### Corrige
