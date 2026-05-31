@@ -1,15 +1,15 @@
 import { L, R, U, D } from './core.mjs';
 
 const KEY_DIR = {
-  ArrowLeft: L, KeyA: L,
+  ArrowLeft: L, KeyA: L, KeyQ: L,
   ArrowRight: R, KeyD: R,
-  ArrowUp: U, KeyW: U,
+  ArrowUp: U, KeyW: U, KeyZ: U,
   ArrowDown: D, KeyS: D,
 };
 
 const KEY_POLL_ORDER = [
-  'ArrowUp', 'KeyW', 'ArrowDown', 'KeyS',
-  'ArrowLeft', 'KeyA', 'ArrowRight', 'KeyD',
+  'ArrowUp', 'KeyW', 'KeyZ', 'ArrowDown', 'KeyS',
+  'ArrowLeft', 'KeyA', 'KeyQ', 'ArrowRight', 'KeyD',
 ];
 
 export function initInput({ game, getPacman, canvas, audio }) {

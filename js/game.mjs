@@ -32,7 +32,6 @@ export function createGame({ audio, renderer }) {
     ghostEatStreak: 0,
     readyTimer: 0,
     levelFlashTimer: 0,
-    lastTime: 0,
 
     init() {
       pacman = new Pacman();
@@ -99,7 +98,11 @@ export function createGame({ audio, renderer }) {
       }
       if (this.score > this.hiScore) {
         this.hiScore = this.score;
-        localStorage.setItem('pacmanHi', this.hiScore);
+        try {
+          localStorage.setItem('pacmanHi', String(this.hiScore));
+        } catch {
+          /* quota / mode prive */
+        }
       }
       this.updateHUD();
       if (this.dotsLeft <= 0) {
@@ -160,7 +163,6 @@ export function createGame({ audio, renderer }) {
       if (this.state === 'ready') {
         this.readyTimer -= dt;
         if (this.readyTimer <= 0) this.state = 'playing';
-        pacman.update();
         return;
       }
       if (this.state === 'levelComplete') {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pacman-v1.5';
+const CACHE_NAME = 'pacman-v1.6';
 const CORE_FILES = [
   './',
   './index.html',

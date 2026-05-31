@@ -14,9 +14,17 @@ Jeu Pac-Man arcade complet, installable et jouable hors ligne.
 Pocman/
 ├── index.html
 ├── styles.css
+├── icon.svg
+├── icon-192.png
+├── icon-512.png
 ├── js/
-│   ├── core.mjs      # Logique pure (tests)
-│   └── main.mjs      # Jeu (entites, rendu, boucle)
+│   ├── core.mjs       # Labyrinthe, constantes, logique pure (tests)
+│   ├── entities.mjs   # Pac-Man, fantomes
+│   ├── game.mjs       # Etat, collisions, score
+│   ├── render.mjs     # Canvas, overlays
+│   ├── input.mjs      # Clavier, D-pad, swipe
+│   ├── audio.mjs      # Sons Web Audio
+│   └── main.mjs       # Orchestration, boucle rAF
 ├── tests/
 ├── sw.js
 ├── manifest.json
@@ -47,7 +55,7 @@ GitHub Pages via Actions (branche `main`). Activer **Settings → Pages → GitH
 
 | Plateforme | Controle |
 |------------|----------|
-| Clavier | Fleches ou ZQSD / WASD |
+| Clavier | Fleches, WASD ou ZQSD (AZERTY : Z/Q/S/D) |
 | Mobile | D-pad ou swipe |
 | Pause | Espace ou Echap |
 

@@ -151,7 +151,7 @@ export function createRenderer() {
       ctx.fillText('PRESS SPACE / TAP', tx, ty + 10);
       ctx.fillText('TO START', tx, ty + 30);
       ctx.fillStyle = '#0ff';
-      ctx.fillText('ZQSD / FLECHES / D-PAD', tx, ty + 60);
+      ctx.fillText('FLECHES / WASD / ZQSD', tx, ty + 60);
       ctx.fillStyle = '#888';
       ctx.font = '6px monospace';
       ctx.fillText('CLIQUEZ LE JEU PUIS JOUEZ', tx, ty + 78);

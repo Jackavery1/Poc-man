@@ -4,7 +4,7 @@ import {
   SCATTER, FRIGHTENED, EATEN, HOUSE,
   SPEED_PAC, SPEED_GHOST, SPEED_FRIGHT, SPEED_EATEN,
   FRIGHT_DURATION, FRIGHT_FLASH,
-  isAlignedAt, canWalkAt, canWalkGhostAt, pickMoveToward,
+  isAlignedAt, canWalkAt, canWalkGhostAt, pickMoveToward, getHouseExitAction,
 } from './core.mjs';
 
 export class Entity {
@@ -121,7 +121,6 @@ export class Ghost extends Entity {
     this.exitDelay = exitDelay;
     this.mode = HOUSE;
     this.frightTimer = 0;
-    this.eatScore = 200;
     this.speed = SPEED_GHOST;
     this.dir = { ...U };
     this.exitTimer = exitDelay;
@@ -221,14 +220,15 @@ export class Ghost extends Entity {
     this.y = this.alignedY;
     const col = this.tileCol;
     const row = this.tileRow;
-    if (col === 13 && row === 11) {
+    const action = getHouseExitAction(col, row);
+    if (action.type === 'exit') {
       this.mode = SCATTER;
       this.speed = SPEED_GHOST;
       this.dir = { ...L };
       return;
     }
-    if (col !== 13) {
-      this.dir = col < 13 ? { ...R } : { ...L };
+    if (action.type === 'horizontal') {
+      this.dir = action.toward === 'right' ? { ...R } : { ...L };
     } else {
       this.dir = { ...U };
     }

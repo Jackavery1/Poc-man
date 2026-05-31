@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.1] - 2026-05-30
+
+### Corrige
+- Icones PNG 192/512 ajoutees au depot (PWA + CI)
+- Clavier AZERTY : touches `KeyZ` / `KeyQ` mappees
+- Pac-Man fige pendant l ecran READY
+- `updateHouse` utilise `getHouseExitAction` (plus de duplication)
+- `localStorage.setItem` protege par try/catch
+
+### Modifie
+- README structure a jour (7 modules)
+- SW v1.6, texte aide : FLECHES / WASD / ZQSD
+
 ## [1.3.0] - 2026-05-30
 
 ### Ajouté
