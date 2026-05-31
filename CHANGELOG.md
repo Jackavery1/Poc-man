@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.3.0] - 2026-05-30
+
+### Ajouté
+- Modules `js/entities.mjs`, `js/render.mjs`, `js/game.mjs`, `js/input.mjs`, `js/audio.mjs`
+- `js/main.mjs` reduit a l orchestration (boucle rAF, SW)
+
+### Modifié
+- SW v1.5 — precache de tous les modules JS
+- `ARCHITECTURE.md` mis a jour
+
 ## [1.2.0] - 2026-05-30
 
 ### Ajouté

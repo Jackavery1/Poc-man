@@ -7,7 +7,12 @@
 | `index.html` | Structure DOM, HUD, canvas |
 | `styles.css` | Presentation |
 | `js/core.mjs` | Labyrinthe, constantes, logique pure (testable) |
-| `js/main.mjs` | Entites, rendu, etat jeu, entrees, boucle |
+| `js/entities.mjs` | Pac-Man, fantomes, classe Entity |
+| `js/render.mjs` | Canvas, murs, overlays, popups |
+| `js/game.mjs` | Etat, collisions, niveaux, score |
+| `js/input.mjs` | Clavier, D-pad, swipe |
+| `js/audio.mjs` | Sons synthetiques Web Audio |
+| `js/main.mjs` | Orchestration, boucle rAF, SW |
 | `sw.js` | Cache offline PWA |
 
 ## Machine a etats (`game.state`)
