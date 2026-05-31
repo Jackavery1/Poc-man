@@ -129,29 +129,6 @@ export function createRenderer() {
     drawFruit();
   }
 
-  function drawLives(pacman) {
-    const row = document.getElementById('lives-row');
-    row.replaceChildren();
-    for (let i = 0; i < pacman.lives; i++) {
-      const c = document.createElement('canvas');
-      c.width = 18;
-      c.height = 18;
-      const cx = c.getContext('2d');
-      cx.save();
-      cx.translate(9, 9);
-      cx.shadowColor = '#FFE000';
-      cx.shadowBlur = 8;
-      cx.fillStyle = '#FFE000';
-      cx.beginPath();
-      cx.moveTo(0, 0);
-      cx.arc(0, 0, 7, 0.4, Math.PI * 2 - 0.4);
-      cx.closePath();
-      cx.fill();
-      cx.restore();
-      row.appendChild(c);
-    }
-  }
-
   function addPopup(x, y, text, color = '#ffffff') {
     popups.push({ x, y, text, color, life: 1 });
   }
@@ -192,7 +169,7 @@ export function createRenderer() {
       ctx.shadowColor = '#FFE000';
       ctx.shadowBlur = 24;
       ctx.fillStyle = '#FFE000';
-      ctx.fillText('PAC-MAN', tx, ty - 50);
+      ctx.fillText('POC-MAN', tx, ty - 50);
       ctx.shadowBlur = 0;
       ctx.fillStyle = '#aaa';
       ctx.font = '8px monospace';
@@ -291,7 +268,6 @@ export function createRenderer() {
       mazeDirty = true;
     },
     drawFrame,
-    drawLives,
     drawOverlay,
     addPopup,
     updatePopups,

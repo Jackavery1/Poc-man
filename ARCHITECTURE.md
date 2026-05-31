@@ -7,11 +7,11 @@
 | `index.html` | Structure DOM, HUD, canvas, D-pad |
 | `styles.css` | Presentation responsive |
 | `js/core.mjs` | Labyrinthe, constantes, logique pure (testable) |
-| `js/entities.mjs` | Pac-Man, fantomes |
+| `js/entities.mjs` | Poc-man, fantomes |
 | `js/game.mjs` | Etat, collisions, fruits, Elroy |
 | `js/render.mjs` | Canvas HiDPI, cache pastilles, overlays |
 | `js/input.mjs` | Clavier, D-pad, swipe, pause |
-| `js/hud.mjs` | Mise a jour DOM (score, record, annonces) |
+| `js/hud.mjs` | Points, record, vies, annonces DOM |
 | `js/audio.mjs` | Sons Web Audio + mute |
 | `js/main.mjs` | Orchestration, boucle rAF, SW |
 | `sw.js` | Cache offline PWA |
@@ -74,6 +74,6 @@ npm run test:e2e
 
 ## PWA
 
-- SW version alignee manifest (`pacman-1.5.0`)
+- SW version alignee manifest (`poc-man-1.5.1`)
 - Banniere `#sw-update` + `SKIP_WAITING`
 - Screenshots manifest (icon-512)

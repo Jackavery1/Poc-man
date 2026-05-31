@@ -1,60 +1,95 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self'; worker-src 'self';">
-<title>PAC-MAN</title>
-<link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="styles.css">
-<meta name="theme-color" content="#000820">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="PAC-MAN">
-<link rel="apple-touch-icon" href="icon.svg">
-<link rel="icon" href="icon.svg">
-</head>
-<body tabindex="0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5, viewport-fit=cover"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self'; worker-src 'self';"
+    />
+    <title>POC-MAN</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="theme-color" content="#000820" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="POC-MAN" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="icon" href="icon.svg" />
+  </head>
+  <body tabindex="0">
+    <div
+      id="announcer"
+      class="sr-only"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
 
-<div id="announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+    <div id="hud">
+      <div class="hud-block">
+        <span class="hud-label">POINTS</span>
+        <span class="hud-val gold" id="hud-score">0</span>
+      </div>
+      <div class="hud-block" style="align-items: center">
+        <span
+          style="
+            font-size: 13px;
+            color: #ffe000;
+            text-shadow:
+              0 0 12px #ffe000,
+              0 0 30px #ff8800;
+          "
+          >★ POC-MAN ★</span
+        >
+      </div>
+      <div class="hud-block" style="align-items: flex-end">
+        <span class="hud-label">RECORD</span>
+        <span class="hud-val cyan" id="hud-hi">0</span>
+        <button
+          type="button"
+          id="btn-mute"
+          class="hud-btn"
+          aria-label="Couper le son"
+        >
+          🔊
+        </button>
+      </div>
+    </div>
 
-<div id="hud">
-  <div class="hud-block">
-    <span class="hud-label">SCORE</span>
-    <span class="hud-val gold" id="hud-score">0</span>
-  </div>
-  <div class="hud-block" style="align-items:center;">
-    <span style="font-size:13px;color:#FFE000;text-shadow:0 0 12px #FFE000,0 0 30px #FF8800;">★ PAC-MAN ★</span>
-  </div>
-  <div class="hud-block" style="align-items:flex-end;">
-    <span class="hud-label">RECORD</span>
-    <span class="hud-val cyan" id="hud-hi">0</span>
-    <button type="button" id="btn-mute" class="hud-btn" aria-label="Couper le son">🔊</button>
-  </div>
-</div>
+    <div id="sw-update" hidden>
+      <span>Mise a jour disponible</span>
+      <button type="button" id="sw-reload">Recharger</button>
+    </div>
 
-<div id="sw-update" hidden>
-  <span>Mise a jour disponible</span>
-  <button type="button" id="sw-reload">Recharger</button>
-</div>
+    <div id="lives-row"></div>
 
-<div id="lives-row"></div>
+    <div id="game-wrap">
+      <canvas
+        id="canvas"
+        tabindex="0"
+        aria-label="Zone de jeu Poc-man"
+      ></canvas>
+      <div id="scanlines"></div>
+      <div id="vignette"></div>
+    </div>
 
-<div id="game-wrap">
-  <canvas id="canvas" tabindex="0" aria-label="Zone de jeu Pac-Man"></canvas>
-  <div id="scanlines"></div>
-  <div id="vignette"></div>
-</div>
+    <div id="dpad">
+      <button class="dbtn" id="dbtn-up" aria-label="Haut">▲</button>
+      <button class="dbtn" id="dbtn-left" aria-label="Gauche">◀</button>
+      <button type="button" class="dbtn" id="dbtn-pause" aria-label="Pause">
+        <span>II</span><span class="dpad-lvl" id="hud-level-dpad">1</span>
+      </button>
+      <button class="dbtn" id="dbtn-right" aria-label="Droite">▶</button>
+      <button class="dbtn" id="dbtn-down" aria-label="Bas">▼</button>
+    </div>
 
-<div id="dpad">
-  <button class="dbtn" id="dbtn-up" aria-label="Haut">▲</button>
-  <button class="dbtn" id="dbtn-left" aria-label="Gauche">◀</button>
-  <button type="button" class="dbtn" id="dbtn-pause" aria-label="Pause"><span>II</span><span class="dpad-lvl" id="hud-level-dpad">1</span></button>
-  <button class="dbtn" id="dbtn-right" aria-label="Droite">▶</button>
-  <button class="dbtn" id="dbtn-down" aria-label="Bas">▼</button>
-</div>
-
-<script type="module" src="js/main.mjs"></script>
-</body>
+    <script type="module" src="js/main.mjs"></script>
+  </body>
 </html>

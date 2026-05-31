@@ -1,8 +1,8 @@
 {
-  "name": "PAC-MAN Arcade",
-  "version": "1.5.0",
-  "short_name": "PAC-MAN",
-  "description": "Classic Pac-Man arcade game — jouer hors ligne",
+  "name": "POC-MAN Arcade",
+  "version": "1.5.1",
+  "short_name": "POC-MAN",
+  "description": "Clone arcade Poc-man — jouer hors ligne",
   "start_url": "./index.html",
   "display": "fullscreen",
   "orientation": "any",
@@ -36,7 +36,7 @@
       "sizes": "512x512",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "PAC-MAN Arcade"
+      "label": "POC-MAN Arcade"
     }
   ],
   "shortcuts": [

@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.1] - 2026-05-31
+
+### Corrige
+- Branding unifie **POC-MAN** / Poc-man (HTML, manifest, overlays, e2e)
+- Test e2e titre aligne sur `POC-MAN`
+- Label HUD **POINTS** (au lieu de SCORE)
+- `drawLives` deplace dans `hud.mjs`
+- Couverture Vitest etendue a `game.mjs` (seuil 25 %)
+
+### Modifie
+- SW `poc-man-1.5.1`, README et ARCHITECTURE
+
 ## [1.5.0] - 2026-05-31
 
 ### Ajoute

@@ -112,7 +112,7 @@ export function createGame({ audio, renderer, hud }) {
       this.ghostEatStreak = 0;
       this.readyTimer = 2500;
       this.state = 'ready';
-      renderer.drawLives(pacman);
+      hud.drawLives(pacman);
       this.syncHUD();
     },
 
@@ -129,7 +129,7 @@ export function createGame({ audio, renderer, hud }) {
       if (!shouldAwardExtraLife(this.score, this.extraLifeGiven)) return;
       this.extraLifeGiven = true;
       pacman.lives++;
-      renderer.drawLives(pacman);
+      hud.drawLives(pacman);
       hud.announce(`Vie bonus ! Score ${this.score}`);
     },
 
@@ -238,7 +238,7 @@ export function createGame({ audio, renderer, hud }) {
       audio.death();
       setTimeout(() => {
         pacman.lives--;
-        renderer.drawLives(pacman);
+        hud.drawLives(pacman);
         if (pacman.lives <= 0) {
           this.state = 'gameOver';
           hud.announce(`Fin de partie. Score ${this.score}`);

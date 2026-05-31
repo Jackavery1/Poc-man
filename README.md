@@ -1,8 +1,8 @@
-# PAC-MAN Arcade — PWA
+# POC-MAN Arcade — PWA
 
 [![CI](https://github.com/Jackavery1/Poc-man/actions/workflows/ci.yml/badge.svg)](https://github.com/Jackavery1/Poc-man/actions/workflows/ci.yml)
 
-Jeu Pac-Man arcade complet, installable et jouable hors ligne.
+Clone arcade **Poc-man**, installable et jouable hors ligne.
 
 **Jouer en ligne :** [jackavery1.github.io/Poc-man](https://jackavery1.github.io/Poc-man/)
 
@@ -19,11 +19,11 @@ Pocman/
 ├── icon-512.png
 ├── js/
 │   ├── core.mjs       # Labyrinthe, constantes, logique pure (tests)
-│   ├── entities.mjs   # Pac-Man, fantomes
+│   ├── entities.mjs   # Poc-man, fantomes
 │   ├── game.mjs       # Etat, collisions, score
 │   ├── render.mjs     # Canvas, overlays
 │   ├── input.mjs      # Clavier, D-pad, swipe
-│   ├── hud.mjs        # Score, record, annonces
+│   ├── hud.mjs        # Points, record, vies, annonces
 │   ├── audio.mjs      # Sons Web Audio
 │   └── main.mjs       # Orchestration, boucle rAF
 │   e2e/               # Tests Playwright
@@ -83,4 +83,4 @@ Cliquez sur le jeu pour le focus clavier.
 
 ## Licence
 
-Projet demo. Pac-Man est une marque de Bandai Namco.
+Projet demo independant. Pac-Man est une marque de Bandai Namco ; **Poc-man** est un hommage non officiel.

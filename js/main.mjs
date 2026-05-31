@@ -98,5 +98,5 @@ if (muteBtn) {
 }
 
 game.init();
-renderer.drawLives(getPacman());
+hud.drawLives(getPacman());
 requestAnimationFrame(loop);
