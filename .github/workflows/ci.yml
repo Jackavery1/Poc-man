@@ -16,7 +16,8 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: npm test
+      - run: npm run lint
+      - run: npm run test:coverage
 
   deploy:
     needs: test
@@ -26,10 +27,19 @@ jobs:
       contents: read
       pages: write
       id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare site artifact
+        run: |
+          mkdir -p _site
+          cp index.html styles.css manifest.json sw.js icon.svg icon-192.png icon-512.png _site/
+          cp -r js _site/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
-      - uses: actions/deploy-pages@v4
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

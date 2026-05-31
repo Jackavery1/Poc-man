@@ -2,15 +2,14 @@ import { describe, it, expect } from 'vitest';
 import {
   CELL,
   SPEED_PAC,
-  SPEED_GHOST,
   EATEN,
   HOUSE,
-  WALL,
-  DOOR,
+  SCATTER,
   isAlignedAt,
   canWalkAt,
   canWalkGhostAt,
   pickMoveToward,
+  getHouseExitAction,
   tileColFromX,
   alignedXY,
 } from '../js/core.mjs';
@@ -36,7 +35,7 @@ describe('canWalkGhostAt', () => {
 
   it('interdit le tunnel lateral aux fantomes actifs', () => {
     expect(canWalkGhostAt(HOUSE, 2, 14)).toBe(false);
-    expect(canWalkGhostAt('chase', 25, 14)).toBe(false);
+    expect(canWalkGhostAt(SCATTER, 25, 14)).toBe(false);
   });
 
   it('autorise le tunnel pour EATEN', () => {
@@ -50,6 +49,20 @@ describe('pickMoveToward', () => {
     const canWalk = (c, r) => c === 12 && r === 14;
     const next = pickMoveToward(13, 14, dir, { col: 13, row: 11 }, canWalk);
     expect(next).toEqual({ dx: -1, dy: 0, angle: Math.PI });
+  });
+});
+
+describe('getHouseExitAction', () => {
+  it('declenche la sortie a col 13 row 11', () => {
+    expect(getHouseExitAction(13, 11)).toEqual({ type: 'exit' });
+  });
+
+  it('va vers la droite si col < 13', () => {
+    expect(getHouseExitAction(11, 14)).toEqual({ type: 'horizontal', toward: 'right' });
+  });
+
+  it('monte si col 13 et row > 11', () => {
+    expect(getHouseExitAction(13, 14)).toEqual({ type: 'up' });
   });
 });
 

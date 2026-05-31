@@ -1,5 +1,6 @@
 {
   "name": "PAC-MAN Arcade",
+  "version": "1.2.0",
   "short_name": "PAC-MAN",
   "description": "Classic Pac-Man arcade game — jouer hors ligne",
   "start_url": "./index.html",

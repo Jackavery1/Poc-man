@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0] - 2026-05-30
+
+### Ajouté
+- `js/main.mjs`, `styles.css` — separation HTML / CSS / JS
+- `ARCHITECTURE.md`, ESLint, couverture Vitest (seuils sur `core.mjs`)
+- CSP, `aria-live`, pause boucle si onglet cache
+- Deploy Pages : artifact `_site` (sans tests/node_modules)
+- Dependabot, badge CI, `getHouseExitAction` + tests
+
+### Modifié
+- SW v1.4 (sans Google Fonts), cache `main.mjs` + `styles.css`
+- Zoom autorise (`maximum-scale=5`)
+
 ## [1.1.0] - 2026-05-30
 
 ### Ajouté

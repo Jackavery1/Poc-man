@@ -1,95 +1,64 @@
 # PAC-MAN Arcade — PWA
 
-Jeu Pac-Man arcade complet, installable et jouable hors ligne (Progressive Web App).
+[![CI](https://github.com/Jackavery1/Poc-man/actions/workflows/ci.yml/badge.svg)](https://github.com/Jackavery1/Poc-man/actions/workflows/ci.yml)
 
-**Dépôt :** [github.com/Jackavery1/Poc-man](https://github.com/Jackavery1/Poc-man)
+Jeu Pac-Man arcade complet, installable et jouable hors ligne.
 
-## Structure du projet
+**Jouer en ligne :** [jackavery1.github.io/Poc-man](https://jackavery1.github.io/Poc-man/)
+
+**Depot :** [github.com/Jackavery1/Poc-man](https://github.com/Jackavery1/Poc-man)
+
+## Structure
 
 ```
 Pocman/
-├── index.html          # Interface + jeu (module ES)
+├── index.html
+├── styles.css
 ├── js/
-│   └── core.mjs        # Constantes, labyrinthe, logique IA testable
+│   ├── core.mjs      # Logique pure (tests)
+│   └── main.mjs      # Jeu (entites, rendu, boucle)
 ├── tests/
-│   └── core.test.mjs   # Tests unitaires (Vitest)
-├── sw.js               # Service Worker (cache offline)
-├── manifest.json       # Manifest PWA
-├── icon.svg            # Icône vectorielle
-├── icon-192.png        # Icône PWA 192×192
-├── icon-512.png        # Icône PWA 512×512
-├── package.json        # Scripts npm (tests, serveur local)
-└── README.md
+├── sw.js
+├── manifest.json
+└── ARCHITECTURE.md
 ```
 
-## Prérequis
-
-- Navigateur moderne (Chrome, Firefox, Edge, Safari)
-- [Node.js](https://nodejs.org/) 18+ (optionnel, pour les tests)
-
-## Lancer en local
-
-```bash
-# Option 1 — npm
-npm run serve
-# Ouvrir http://localhost:8080
-
-# Option 2 — Python
-python -m http.server 8080
-```
-
-> Le Service Worker nécessite **HTTPS** ou **localhost**.
-
-## Tests
+## Local
 
 ```bash
 npm install
-npm test
+npm run serve
+# http://localhost:8080
 ```
 
-## Déploiement
+## Qualite
 
-### GitHub Pages
+```bash
+npm test
+npm run test:coverage
+npm run lint
+```
 
-1. Pousser sur `main`
-2. Settings → Pages → Source : **GitHub Actions**
-3. Le workflow `.github/workflows/ci.yml` déploie automatiquement
+## Deploiement
 
-### Netlify
+GitHub Pages via Actions (branche `main`). Activer **Settings → Pages → GitHub Actions** si besoin.
 
-Glisser-déposer le dossier du projet sur [netlify.com](https://netlify.com).
+## Controles
 
-## Contrôles
-
-| Plateforme | Contrôle |
+| Plateforme | Controle |
 |------------|----------|
-| Clavier | **Flèches** ou **ZQSD** (AZERTY) / WASD (QWERTY) |
-| Mobile / tablette | D-pad à l'écran ou **swipe** |
-| Pause | `Espace` ou `Échap` |
+| Clavier | Fleches ou ZQSD / WASD |
+| Mobile | D-pad ou swipe |
+| Pause | Espace ou Echap |
 
-Cliquez sur la zone de jeu avant de jouer (focus clavier).
+Cliquez sur le jeu pour le focus clavier.
 
-## Installation PWA
+## Depannage PWA
 
-En HTTPS : menu navigateur → « Ajouter à l'écran d'accueil ».
-
-Après une mise à jour : rechargement forcé (`Ctrl+Shift+R`) ou vider le cache du Service Worker (F12 → Application).
-
-## Règles
-
-- Pastilles = 10 pts, Power Pellets = 50 pts
-- Fantômes effrayés = 200 / 400 / 800 / 1600 pts (combo)
-- 3 vies, modes fantômes Scatter ↔ Chase
-
-## IA des fantômes
-
-| Fantôme | Couleur | Chase | Scatter |
-|---------|---------|-------|---------|
-| Blinky | Rouge | Cible Pac-Man | Haut-droite |
-| Pinky | Rose | 4 cases devant Pac-Man | Haut-gauche |
-| Inky | Cyan | Vecteur via Blinky | Bas-droite |
-| Clyde | Orange | Chase si loin, fuit si proche | Bas-gauche |
+1. Rechargement force : `Ctrl+Shift+R`
+2. F12 → Application → Service Workers → Unregister
+3. Verifier HTTPS ou localhost (SW requis)
 
 ## Licence
 
-Projet démo / portfolio. Pac-Man est une marque de Bandai Namco.
+Projet demo. Pac-Man est une marque de Bandai Namco.

@@ -79,6 +79,12 @@ export function alignedXY(col, row) {
   return { x: col * CELL + CELL / 2, y: row * CELL + CELL / 2 };
 }
 
+/**
+ * Indique si une position pixel est alignee sur le centre d'une case.
+ * @param {number} x
+ * @param {number} y
+ * @param {number} speed
+ */
 export function isAlignedAt(x, y, speed) {
   const col = tileColFromX(x);
   const row = tileRowFromY(y);
@@ -99,6 +105,10 @@ export function canWalkAt(col, row, { door = false, maze = MAZE_DEF } = {}) {
   return true;
 }
 
+/**
+ * Deplacement fantome autorise (tunnel, porte, murs).
+ * @param {string} mode HOUSE|EATEN|SCATTER|CHASE|...
+ */
 export function canWalkGhostAt(mode, col, row, maze = MAZE_DEF) {
   const c = wrapCol(col);
   if (row < 0 || row >= ROWS) return false;
@@ -109,6 +119,9 @@ export function canWalkGhostAt(mode, col, row, maze = MAZE_DEF) {
   return true;
 }
 
+/**
+ * Direction optimale vers la cible; demi-tour si cul-de-sac.
+ */
 export function pickMoveToward(tileCol, tileRow, dir, target, canWalk) {
   let avail = DIRS.filter((d) => {
     if (d.dx === -dir.dx && d.dy === -dir.dy) return false;
@@ -130,4 +143,11 @@ export function pickMoveToward(tileCol, tileRow, dir, target, canWalk) {
     }
   }
   return { ...best };
+}
+
+/** Phase B sortie maison : action apres snap grille. */
+export function getHouseExitAction(col, row) {
+  if (col === 13 && row === 11) return { type: 'exit' };
+  if (col !== 13) return { type: 'horizontal', toward: col < 13 ? 'right' : 'left' };
+  return { type: 'up' };
 }
